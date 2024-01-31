@@ -27,7 +27,11 @@ jobs:
 
       - name: Log error
         if: ${{ job.status != 'success' }}
-        run: echo "Error occurred during labeler job"
+        run: |
+          echo "Error occurred during labeler job"
+          echo "Sending notification..."
+          # Add notification action here to send a notification with the error details
+          echo "Notification sent"
 
       - name: Log success
         if: ${{ job.status == 'success' }}
