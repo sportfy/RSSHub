@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  labeler:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Retry on server error
+        uses: softprops/action-retry@v1
+        with:
+          retries: 3
+          delay: 1000
+          max_delay: 10000
+          backoff: exponential
+          condition: ${{ job.status != 'success' }}
+
+      - name: Run labeler
+        uses: actions/labeler@v4
+
+      - name: Log error
+        if: ${{ job.status != 'success' }}
+        run: echo "Error occurred during labeler job"
+
+      - name: Log success
+        if: ${{ job.status == 'success' }}
+        run: echo "Labeler job completed successfully"
